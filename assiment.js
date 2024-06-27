@@ -1,3 +1,4 @@
+
 class ProcessError extends Error {
     constructor(message) {
         super(message);
@@ -7,18 +8,17 @@ class ProcessError extends Error {
 
 async function processUserData(userId) {
     try {
-        const userResponse = await fetch(`https://jsonplaceholder.typicode.com/users/${userId}`);
-        if (!userResponse.ok) {
+        const respond = await fetch(`https://jsonplaceholder.typicode.com/users/${userId}`);
+        if (!respond.ok) {
             throw new ProcessError('Failed to fetch user data');
         }
-        const userData = await userResponse.json();
+        const userData = await respond.json();
 
         const postResponse = await fetch(`https://jsonplaceholder.typicode.com/posts?userId=${userId}`);
         if (!postResponse.ok) {
             throw new ProcessError('Failed to fetch posts');
         }
         const posts = await postResponse.json();
-
         const firstPostId = posts[0].id;
         const commentResponse = await fetch(`https://jsonplaceholder.typicode.com/comments?postId=${firstPostId}`);
         if (!commentResponse.ok) {
@@ -40,4 +40,4 @@ async function processUserData(userId) {
     }
 }
 
-processUserData(1);
+processUserData(5);

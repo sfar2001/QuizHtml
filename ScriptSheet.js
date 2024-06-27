@@ -1,3 +1,7 @@
+let scoresString = localStorage.getItem('scores');
+let scores = scoresString ? JSON.parse(scoresString) : [];
+
+
 class Option {
     constructor(text, isCorrect) {
         this.text = text;
@@ -37,6 +41,7 @@ class Quiz {
     }
 
     updateScoreDisplay() {
+        document.querySelector('.score').style.display = 'none';
         const scoreElement = document.querySelector('.score');
         scoreElement.textContent = `Score: ${this.score}`;
     }
@@ -84,6 +89,15 @@ async function initializeQuiz(apiKey) {
                 if (quizContext.quiz.isFinished()) {
                     alert(`Congratulations! You have completed the quiz. Your final score is: ${quizContext.quiz.getScore()}.`);
                     document.getElementById('reset').style.display = 'flex';
+                    document.querySelector('.score').style.display = 'flex';
+                    let finalScore = quizContext.quiz.getScore();
+
+                    scores.push(finalScore);
+
+                    console.log(scores);
+                    localStorage.setItem('scores', JSON.stringify(scores));
+
+
                 } else {
                     renderQuestion(quizContext.quiz.getCurrentQuestion());
                 }
@@ -146,3 +160,19 @@ function getOptionByText(text) {
 
 const apiKey = 'tmXxHilqVbjDFzWJrDv6VIFicA7LDcgxI3Y2h2eQ';
 initializeQuiz.call({ quiz: null }, apiKey);
+function updateLeaderboard() {
+    let scoresString = localStorage.getItem('scores');
+    let scores = scoresString ? JSON.parse(scoresString) : [];
+    let leaderboardItems = document.querySelectorAll('.body ol li');
+    leaderboardItems.forEach((item, index) => {
+        let nameElement = item.querySelector('mark');
+        let scoreElement = item.querySelector('small');
+        if (index < scores.length) {
+            nameElement.textContent = `Quiz Number : ${index + 1}`;
+            scoreElement.textContent = scores[index].toString();
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
+window.addEventListener('load', updateLeaderboard);
